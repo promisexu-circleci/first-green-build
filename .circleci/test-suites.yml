@@ -1,0 +1,10 @@
+---
+name: node tests
+discover: find ./test -type f -name '*.test.js'
+run: |
+  tmp=$(mktemp)
+  node --test --test-reporter=junit --test-reporter-destination="$tmp" << test.atoms >> && status=0 || status=$?
+  sed -e 's#<testsuites>#<testsuites><testsuite name="node tests">#' -e 's#</testsuites>#</testsuite></testsuites>#' "$tmp" > "<< outputs.junit >>"
+  exit $status
+options:
+  store-test-results: true
